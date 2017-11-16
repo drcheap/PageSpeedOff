@@ -1,0 +1,36 @@
+{
+   "manifest_version": 2,
+   "name": "PageSpeedOff",
+   "version": "1.0",
+   "author": "Dr. Cheap",
+   "description": "Disables Google PageSpeed",
+   "homepage_url": "https://addons.mozilla.org/en-US/firefox/addon/pagespeedoff",
+   "permissions": ["storage", "webRequest", "webRequestBlocking", "http://*/*", "https://*/*"],
+
+   "applications": {
+      "gecko": {
+         "id": "pagespeedoff@drcheap.com"
+      }
+   },
+
+   "icons": {
+     "16": "icons/logo-16-slash.png",
+     "32": "icons/logo-32-slash.png",
+     "48": "icons/logo-48-slash.png",
+     "64": "icons/logo-64-slash.png",
+     "96": "icons/logo-96-slash.png",
+     "128": "icons/logo-128-slash.png"
+   },
+
+   "background": {
+      "scripts": ["background.js"]
+   },
+
+   "browser_action": {
+      "default_title": "Initializing...",
+      "default_icon": {
+         "16": "icons/logo-16-slash.png",
+         "32": "icons/logo-32-slash.png"
+      }
+   }
+}
