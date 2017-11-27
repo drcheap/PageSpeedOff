@@ -16,11 +16,11 @@ function applyState()
 
    // Update the toolbar to reflect current state
    let slash = "";
-   let title = "Allow use of PageSpeed";
+   let title = "PageSpeedOff (Allowing usage)";
    if(isDisabled)
    {
       slash = "-slash";
-      title = "Tell servers NOT to use PageSpeed";
+      title = "PageSpeedOff (Requesting to not use)";
    }
 
    browser.browserAction.setIcon({
