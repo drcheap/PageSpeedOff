@@ -4,7 +4,7 @@
    "version": "2.0.0",
    "author": "Dr. Cheap",
    "description": "Disables Google PageSpeed",
-   "homepage_url": "https://addons.mozilla.org/en-US/firefox/addon/pagespeedoff",
+   "homepage_url": "https://github.com/drcheap/PageSpeedOff",
    "permissions": ["storage", "tabs", "webRequest", "webRequestBlocking", "http://*/*", "https://*/*"],
 
    "applications": {
