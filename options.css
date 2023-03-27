@@ -1,0 +1,24 @@
+fieldset {
+   margin-bottom: 1em;
+}
+
+fieldset > div {
+   margin-bottom: 1em;
+}
+
+fieldset > div:last-child {
+   margin-bottom: 0;
+}
+
+
+.modeTitle {
+   font-weight: bold;
+}
+
+#currentGlobalState {
+   display: none;
+}
+
+#currentPersiteState {
+   display: none;
+}

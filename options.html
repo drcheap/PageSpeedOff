@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+ <meta charset="utf-8">
+ <link rel="stylesheet" href="options.css"/>
+</head>
+
+<body>
+ <fieldset>
+  <legend>Operating Mode</legend>
+  <form>
+   <div>
+    <p>
+     <input type="radio" name="operatingMode" value="global"> <span class="modeTitle">Global Mode</span>
+    </p>
+    <p>
+     In this mode, the current toggle state applies to <em>every web site</em>.<br>
+     This is equivalent to the old (version 1.x) behavior.
+    </p>
+    <p>
+     <em>Privacy note:</em> when using this mode, and in "requesting not to use" status, your browser fingerprint will become very unique due to the special HTTP header that must be supplied.
+    </p>
+    <p id="currentGlobalState">
+     Your current status is: <span id="gsSpan">(unknown)</span>
+    </p>
+   </div>
+   <hr>
+   <div>
+    <p>
+     <input type="radio" name="operatingMode" value="persite"> <span class="modeTitle">Per-Site Mode</span>
+    </p>
+    <p>
+     In this mode, the toggle state is managed separately for each site on which you change it.<br>
+     This behavior is the default.
+    </p>
+    <p id="currentPersiteState">
+     Sites you currently have set to "requesting not to use" are:<br>
+     <span id="psSpan">(none)</span>
+    </p>
+   </div>
+  </form>
+ </fieldset>
+
+ <script src="options.js"></script>
+</body>
+</html>
