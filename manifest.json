@@ -1,13 +1,13 @@
 {
    "manifest_version": 2,
    "name": "PageSpeedOff",
-   "version": "2.0.0",
+   "version": "2.1.0",
    "author": "Dr. Cheap",
    "description": "Disables Google PageSpeed",
    "homepage_url": "https://github.com/drcheap/PageSpeedOff",
    "permissions": ["storage", "tabs", "webRequest", "webRequestBlocking", "http://*/*", "https://*/*"],
 
-   "applications": {
+   "browser_specific_settings": {
       "gecko": {
          "id": "pagespeedoff@drcheap.com"
       }
@@ -24,7 +24,7 @@
 
    "options_ui": {
      "page": "options.html",
-     "browser_style": true
+     "browser_style": false
    },
 
    "background": {

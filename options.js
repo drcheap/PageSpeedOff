@@ -30,7 +30,7 @@ async function showModeDetails()
 
       for (const [site, thisSite] of persiteSettings.entries())
       {
-         console.log("(persiteSettings) Found item " + site + ": " + thisSite.isDisabled);
+         console.debug("Found item " + site + ": " + thisSite.isDisabled);
          if(thisSite.isDisabled)
          {
             let li = document.createElement("li");
@@ -68,7 +68,7 @@ async function loadOptions()
       operatingMode = mode;
    }
 
-   console.log("Operating mode: " + operatingMode);
+   console.debug("Operating mode: " + operatingMode);
    document.querySelector("input[name=operatingMode][value=" + operatingMode + "]").checked = true;
 
    await showModeDetails();
@@ -77,7 +77,7 @@ async function loadOptions()
 async function setOperatingMode()
 {
    operatingMode = document.querySelector("input[name=operatingMode]:checked").value;
-   console.log("Changing mode to: " + operatingMode);
+   console.info("Changing mode to: " + operatingMode);
    browser.storage.local.set({"mode": operatingMode});
    browser.runtime.sendMessage({"modeChange": operatingMode});
 
@@ -87,8 +87,7 @@ async function setOperatingMode()
 document.addEventListener("DOMContentLoaded", doOnLoad);
 document.querySelectorAll("input[name=operatingMode]").forEach(i => { i.addEventListener("change", setOperatingMode) });
 browser.runtime.onMessage.addListener((msg) => {
-   console.log("msg received: ");
-   console.log(msg);
+   console.debug("Message received", msg);
    if(msg.toggle !== undefined)
    {
       loadOptions();
