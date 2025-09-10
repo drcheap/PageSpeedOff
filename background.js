@@ -15,16 +15,12 @@ async function initialize(details)
 
    // Preset initialization
    let storage = await browser.storage.local.get(["isDisabled","version","mode","globalDisabled","persiteSettings"]);
-   if(storage.version === undefined)
-   {
-      storage.version = 1; // Had non-versioned preset storage, so treat it as version 1
-   }
-
    if(Number.isInteger(storage.version))
    {
       if(storage.version < CURRENT_STORAGE_VERSION)
       {
          // Storage is old, do any necessary upgrades to remain compatible
+
          if(storage.version == 1)
          {
             console.warn("Migrating storage from version 1 to 2...");
