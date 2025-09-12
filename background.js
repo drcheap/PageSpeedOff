@@ -43,7 +43,8 @@ async function initialize(details)
    else
    {
       console.info("No storage version tag found, initializing...");
-      await browser.storage.local.set({"version": CURRENT_STORAGE_VERSION});
+      storage.version = CURRENT_STORAGE_VERSION;
+      await browser.storage.local.set({"version": storage.version});
    }
 
    if(storage.mode === undefined)
