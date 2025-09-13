@@ -6,15 +6,15 @@ const CURRENT_STORAGE_VERSION = 2;
 const MODE_GLOBAL = "global";
 const MODE_PERSITE = "persite";
 
-var isDisabled = true;  // State used when Global Mode is activated (true means inject the header to disable PageSpeed)
-var operatingMode = MODE_PERSITE;
+var _isDisabled = true;  // State used when Global Mode is activated (true means inject the header to disable PageSpeed)
+var _operatingMode = MODE_PERSITE;
 
 async function initialize(details)
 {
    console.debug("Initializing...");
 
    // Preset initialization
-   let storage = await browser.storage.local.get(["isDisabled","version","mode","globalDisabled","persiteSettings"]);
+   const storage = await browser.storage.local.get(["isDisabled","version","mode","globalDisabled","persiteSettings"]);
    if(Number.isInteger(storage.version))
    {
       if(storage.version < CURRENT_STORAGE_VERSION)
@@ -60,10 +60,6 @@ async function initialize(details)
       storage.globalDisabled = true;
       await browser.storage.local.set({"globalDisabled": storage.globalDisabled});
    }
-   else
-   {
-      isDisabled = storage.globalDisabled;
-   }
 
    if(storage.persiteSettings === undefined)
    {
@@ -87,25 +83,25 @@ async function initialize(details)
 
 async function loadSettings()
 {
-   console.debug("Loading stored settings...");
-
-   let storage = await browser.storage.local.get(["version","mode","globalDisabled"]);
+   const storage = await browser.storage.local.get(["version","mode","globalDisabled"]);
    if(storage === undefined || storage.version === undefined || storage.version !== CURRENT_STORAGE_VERSION)
    {
-      console.warn("Settings not fully initialized yet");
+      console.warn("Not loading settings because not fully initialized yet");
       return; // Nothing to load yet
    }
 
-   let globalDisabled = storage.globalDisabled;
+   console.debug("Loading stored settings...");
+
+   const globalDisabled = storage.globalDisabled;
    if(globalDisabled !== undefined)
    {
-      isDisabled = globalDisabled;
+      _isDisabled = globalDisabled;
    }
 
-   let mode = storage.mode;
+   const mode = storage.mode;
    if(mode !== undefined)
    {
-      operatingMode = mode;
+      _operatingMode = mode;
    }
 
    await setAllToolbarIcons();
@@ -115,9 +111,9 @@ async function isSiteDisabled(site)
 {
    if(site !== undefined && site.length > 0)
    {
-      let storage = await browser.storage.local.get("persiteSettings");
-      let persiteSettings = new Map(storage.persiteSettings);
-      let thisSite = persiteSettings.get(site);
+      const storage = await browser.storage.local.get("persiteSettings");
+      const persiteSettings = new Map(storage.persiteSettings);
+      const thisSite = persiteSettings.get(site);
       return thisSite !== undefined && thisSite.isDisabled;
    }
 
@@ -128,9 +124,9 @@ async function setSiteDisabled(site, disabled)
 {
    if(site !== undefined && site.length > 0)
    {
-      let storage = await browser.storage.local.get("persiteSettings");
-      let persiteSettings = new Map(storage.persiteSettings);
-      let thisSite = persiteSettings.has(site) ? persiteSettings.get(site) : {};
+      const storage = await browser.storage.local.get("persiteSettings");
+      const persiteSettings = new Map(storage.persiteSettings);
+      const thisSite = persiteSettings.has(site) ? persiteSettings.get(site) : {};
       console.debug("Changing site setting: " + thisSite.isDisabled + " -> " + disabled);
       thisSite.isDisabled = disabled;
       persiteSettings.set(site, thisSite);
@@ -149,16 +145,16 @@ function getHostnameFromURL(url)
 
 async function toggle(tab)
 {
-   let site = getHostnameFromURL(tab.url);
+   const site = getHostnameFromURL(tab.url);
    let thisSiteDisabled = false;
 
    console.info("Toggle from tab " + tab.id + (site ? " at " + site : ""));
 
    if(operatingMode === MODE_GLOBAL)
    {
-      isDisabled = !isDisabled;
-      thisSiteDisabled = isDisabled;
-      await browser.storage.local.set({"globalDisabled": isDisabled});  // Persist new global state
+      _isDisabled = !isDisabled;
+      thisSiteDisabled = _isDisabled;
+      await browser.storage.local.set({"globalDisabled": _isDisabled});  // Persist new global state
       updateToolbarIcon(thisSiteDisabled);
    }
    else if(operatingMode === MODE_PERSITE)
@@ -170,7 +166,7 @@ async function toggle(tab)
          updateToolbarIcon(thisSiteDisabled, tab.id);
 
          // Also update icon for any other visible tabs at this same site
-         let allTabs = await browser.tabs.query({"active": true, "currentWindow": false});
+         const allTabs = await browser.tabs.query({"active": true, "currentWindow": false});
          await Promise.all(allTabs.map(async (otherTab) => {
             if(otherTab.id !== tab.id && getHostnameFromURL(otherTab.url) === site)
             {
@@ -185,7 +181,7 @@ async function toggle(tab)
 
 async function setIconByURL(url, tabId)
 {
-   let site = getHostnameFromURL(url);
+   const site = getHostnameFromURL(url);
    updateToolbarIcon(await isSiteDisabled(site), tabId);
 }
 
@@ -199,14 +195,14 @@ function updateToolbarIcon(thisSiteDisabled = false, tabId)
       title = "PageSpeedOff (Requesting to not use)";
    }
 
-   let iconParams = {
+   const iconParams = {
       "path": {
          "16": "icons/logo-16" + slash + ".png",
          "32": "icons/logo-32" + slash + ".png"
       }
    };
 
-   let titleParams = {
+   const titleParams = {
       "title": title
    };
 
@@ -224,7 +220,7 @@ function updateToolbarIcon(thisSiteDisabled = false, tabId)
 
 async function setAllToolbarIcons()
 {
-   let allTabs = await browser.tabs.query({});
+   const allTabs = await browser.tabs.query({});
    if(operatingMode === MODE_GLOBAL)
    {
       // Clear per-tab icons & titles, & then set global
@@ -247,13 +243,13 @@ async function setAllToolbarIcons()
 
 async function setPageSpeedHeader(e)
 {
-   let headers = e.requestHeaders;
-   let site = getHostnameFromURL(e.url);
+   const headers = e.requestHeaders;
+   const site = getHostnameFromURL(e.url);
 
    let thisSiteDisabled = false;
    if(operatingMode === MODE_GLOBAL)
    {
-      thisSiteDisabled = isDisabled;
+      thisSiteDisabled = _isDisabled;
    }
    else if(operatingMode === MODE_PERSITE)
    {
@@ -263,7 +259,7 @@ async function setPageSpeedHeader(e)
    if(thisSiteDisabled)
    {
       let exists = false;
-      for(let header of headers)
+      for(const header of headers)
       {
          // Already exists, override
          if(header.name.toLowerCase() === "pagespeed")
@@ -290,9 +286,9 @@ async function setPageSpeedHeader(e)
 async function windowFocusHandler(windowId)
 {
    console.debug("Focused windowId " + windowId);
-   if(windowId != browser.windows.WINDOW_ID_NONE && operatingMode === MODE_PERSITE)
+   if(windowId != browser.windows.WINDOW_ID_NONE && _operatingMode === MODE_PERSITE)
    {
-      let activeTab = (await browser.tabs.query({"active": true, "currentWindow": true}))[0];
+      const activeTab = (await browser.tabs.query({"active": true, "currentWindow": true}))[0];
       await setIconByURL(activeTab.url, activeTab.id);
    }
 }
@@ -302,7 +298,7 @@ async function tabActivationHandler(activeInfo)
    console.debug("Activated tab " + activeInfo.tabId);
    if(operatingMode === MODE_PERSITE)
    {
-      let tabInfo = await browser.tabs.get(activeInfo.tabId);
+      const tabInfo = await browser.tabs.get(activeInfo.tabId);
       await setIconByURL(tabInfo.url, activeInfo.tabId);
    }
 }
@@ -322,7 +318,7 @@ browser.runtime.onMessage.addListener((msg) => {
    console.debug("Message received", msg);
    if(msg.modeChange !== undefined)
    {
-      operatingMode = msg.modeChange;
+      _operatingMode = msg.modeChange;
       setAllToolbarIcons();
    }
 });

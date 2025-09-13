@@ -7,33 +7,33 @@ var operatingMode = MODE_PERSITE;
 async function showModeDetails()
 {
    document.querySelector("#currentGlobalState").style.display = "none";
-   let gsSpan = document.querySelector("#gsSpan");
+   const gsSpan = document.querySelector("#gsSpan");
    gsSpan.textContent = "(unknown)";
 
    document.querySelector("#currentPersiteState").style.display = "none";
-   let psSpan = document.querySelector("#psSpan");
+   const psSpan = document.querySelector("#psSpan");
    psSpan.textContent = "(none)";
 
    if(operatingMode === MODE_GLOBAL)
    {
-      let storage = await browser.storage.local.get(["globalDisabled"]);
-      let globalDisabled = storage.globalDisabled;
+      const storage = await browser.storage.local.get(["globalDisabled"]);
+      const globalDisabled = storage.globalDisabled;
       gsSpan.textContent = globalDisabled ? "Requesting to not use" : "Allowing usage";
       document.querySelector("#currentGlobalState").style.display = "block";
    }
    else if(operatingMode === MODE_PERSITE)
    {
-      let storage = await browser.storage.local.get(["persiteSettings"]);
-      let persiteSettings = new Map(storage.persiteSettings);
+      const storage = await browser.storage.local.get(["persiteSettings"]);
+      const persiteSettings = new Map(storage.persiteSettings);
 
-      let ul = document.createElement("ul");
+      const ul = document.createElement("ul");
 
       for (const [site, thisSite] of persiteSettings.entries())
       {
          console.debug("Found item " + site + ": " + thisSite.isDisabled);
          if(thisSite.isDisabled)
          {
-            let li = document.createElement("li");
+            const li = document.createElement("li");
             li.textContent = site;
             ul.appendChild(li);
          }
@@ -60,8 +60,8 @@ async function doOnLoad()
 
 async function loadOptions()
 {
-   let storage = await browser.storage.local.get("mode");
-   let mode = storage.mode;
+   const storage = await browser.storage.local.get("mode");
+   const mode = storage.mode;
 
    if(mode !== undefined)
    {
